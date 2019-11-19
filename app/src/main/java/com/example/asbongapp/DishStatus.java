@@ -1,17 +1,27 @@
 package com.example.asbongapp;
 
-public class DishStatus {
-    private String name;
+public class DishStatus implements Comparable<DishStatus>{
+    private String foodName;
+    private Integer orderNumber;
     private Integer time;
     private Integer table;
     private Boolean done;
 
-    public String getName() {
-        return name;
+
+    public Integer getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public String getFoodName() {
+        return foodName;
+    }
+
+    public void setFoodName(String foodName) {
+        this.foodName = foodName;
     }
 
     public Integer getTime() {
@@ -39,7 +49,18 @@ public class DishStatus {
     }
 
     @Override
+    public int compareTo(DishStatus dishStatus) {
+        if(this.getTime() < dishStatus.getTime()){
+            return -1;
+        }
+        else if(this.getTime() == dishStatus.getTime()){
+            return 0;
+        }
+        else return 1;
+    }
+
+    @Override
     public String toString() {
-        return name + "\t\t\t" + time + "\t\t\t" + table + "\t\t\t" + done;
+        return foodName + "\t\t\t" + time + "\t\t\t" + table + "\t\t\t" + done + "\t\t\t Orderid: " + orderNumber;
     }
 }

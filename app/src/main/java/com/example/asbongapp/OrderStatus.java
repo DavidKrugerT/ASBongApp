@@ -1,16 +1,17 @@
 package com.example.asbongapp;
 
-public class TableStatus {
-    private Integer name;
+public class OrderStatus {
+    private Integer orderNumber;
+    private Integer tableNumber;
     private Integer amountOfTotalDishes;
     private Integer amountOfDoneDishes;
 
-    public Integer getName() {
-        return name;
+    public Integer getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setName(Integer name) {
-        this.name = name;
+    public void setOrderNumber(Integer name) {
+        this.orderNumber = name;
     }
 
     public Integer getAmountOfTotalDishes() {
@@ -28,9 +29,16 @@ public class TableStatus {
     public void setAmountOfDoneDishes(Integer amountOfDoneDishes) {
         this.amountOfDoneDishes = amountOfDoneDishes;
     }
+    public Integer getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(Integer tableNumber) {
+        this.tableNumber = tableNumber;
+    }
 
     @Override
     public String toString() {
-        return name + "\n" + amountOfDoneDishes + "/" + amountOfTotalDishes;
+        return orderNumber + "\n" + amountOfDoneDishes + "/" + amountOfTotalDishes;
     }
 }

@@ -2,23 +2,31 @@ package com.example.asbongapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ListView dishListView, tableListView;
+    private ListView dishListView, orderListView;
     private Button addRandomOrder;
     private Order order = new Order();
     private ArrayAdapter<DishStatus> dishAdapter;
-
+    private ArrayAdapter<OrderStatus> orderAdapter;
+    Handler timerHandler = new Handler();
+    //Starts function every other second
+    Runnable timerRunnable = new Runnable(){
+        @Override
+        public void run(){
+            fetchDishesStatus();
+            fetchOrdersStatus();
+            timerHandler.postDelayed(this, 2000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,38 +35,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
-        tableListView = (ListView) findViewById(R.id.TableListView);
+        orderListView = (ListView) findViewById(R.id.OrderListView);
         addRandomOrder = (Button) findViewById(R.id.AddRandomOrder);
 
         //Adapter is needed to build a dynamic list.
         //First create an adapter and then set the adapter to the listview.
+        order.addDishStatus(createDish());
+
         dishAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, order.getDishStatuses());
         dishListView.setAdapter(dishAdapter);
 
-        //Adding listner on button.
+        orderAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, order.getOrderStatuses());
+        orderListView.setAdapter(orderAdapter);
+
+        timerHandler.postDelayed(timerRunnable, 2000);
+        //Adding listener on button.
         addRandomOrder.setOnClickListener(this);
 
+
+
     }
+    // stopbutton for runfunction
     @Override
     public void onClick(View view) {
-
-        //Adding crap into Order.dishStuses.
-        ArrayList<DishStatus> tmpDishes = order.getDishStatuses();
-        tmpDishes.add(createDish());
-        order.setDishStatuses(tmpDishes);
-
-        //Alert listView that something is changed.
-        dishAdapter.notifyDataSetChanged();
+        timerHandler.removeCallbacks(timerRunnable);
     }
 
 
     //Creating dishStatus with random stuff.
     private DishStatus createDish(){
         DishStatus dish = new DishStatus();
-        dish.setName(Math.random()>0.5?"Krabba":"Häst");
+        dish.setFoodName(Math.random()>0.5?"Krabba":"Häst");
         dish.setTable(Math.random()>0.5?1:2);
+        dish.setOrderNumber(Math.random()>0.5?1:2);
         dish.setTime((int) (Math.random()*100));
         dish.setDone(false);
         return dish;
     }
+    private OrderStatus createOrder(){
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setAmountOfDoneDishes(0);
+        orderStatus.setAmountOfTotalDishes(3);
+        orderStatus.setOrderNumber(1);
+        orderStatus.setTableNumber(3);
+        return orderStatus;
+    }
+
+    private void fetchDishesStatus() {
+        //Adding crap into Order.dishStuses.
+        order.addDishStatus(createDish());
+        //Alert listView that something is changed.
+        dishAdapter.notifyDataSetChanged();
+        //sort list by descending time order
+        order.sortDishesByTime();
+    }
+
+    private void fetchOrdersStatus() {
+        //Adding crap into Order.orderStatses.
+        order.addOrderStatus(createOrder());
+        //Alert listView that something is changed.
+        orderAdapter.notifyDataSetChanged();
+        //sort list by descending time order
+
+    }
+
 }
