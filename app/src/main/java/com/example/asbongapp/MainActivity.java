@@ -12,7 +12,7 @@ import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ListView dishListView, orderListView;
+    private ListView dishListView, orderListView, cookingDishListView;
     private Button addRandomOrder;
     private Order order = new Order();
     private ArrayAdapter<DishStatus> dishAdapter;
@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
         orderListView = (ListView) findViewById(R.id.OrderListView);
+        cookingDishListView = (ListView) findViewById(R.id.CookingDishesListWiew);
         addRandomOrder = (Button) findViewById(R.id.AddRandomOrder);
 
         //Adapter is needed to build a dynamic list.
