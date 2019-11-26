@@ -9,57 +9,88 @@
 
     <ListView
         android:id="@+id/DishListView"
-        android:layout_width="888dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="138dp"
+        android:layout_width="604dp"
+        android:layout_height="650dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="100dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/CookingDishesListWiew"
         app:layout_constraintStart_toEndOf="@+id/OrderListView"
-        app:layout_constraintTop_toBottomOf="@+id/testAutoUpdate" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/OrderListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="244dp"
+        android:layout_height="648dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginEnd="86dp"
-        android:layout_marginRight="86dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="100dp"
         android:background="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="@+id/DishListView"
-        app:layout_constraintEnd_toStartOf="@+id/DishListView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/DishListView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/AddRandomOrder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="122dp"
-        android:layout_marginLeft="122dp"
-        android:layout_marginBottom="67dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="512dp"
+        android:layout_marginRight="512dp"
         android:text="Add Random Order"
         android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/CookingDishesListWiew"
+        android:layout_width="348dp"
+        android:layout_height="650dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginBottom="100dp"
+        android:background="#FFEB3B"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/DishListView"
-        app:layout_constraintTop_toBottomOf="@+id/DishListView" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/testAutoUpdate"
-        android:layout_width="167dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="346dp"
-        android:layout_marginLeft="346dp"
-        android:layout_marginTop="57dp"
-        android:layout_marginBottom="64dp"
-        android:text="TextView"
+        android:id="@+id/OrderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginBottom="8dp"
+        android:text="Orders"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/OrderListView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/DishTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Dishes"
+        android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/DishListView"
-        app:layout_constraintStart_toStartOf="@+id/DishListView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/DishListView" />
+
+    <TextView
+        android:id="@+id/CookingDishesTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Cooking Dishes"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/CookingDishesListWiew"
+        app:layout_constraintStart_toStartOf="@+id/CookingDishesListWiew" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
