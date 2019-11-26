@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
         orderListView = (ListView) findViewById(R.id.OrderListView);
-        cookingDishListView = (ListView) findViewById(R.id.CookingDishesListWiew);
+        cookingDishListView = (ListView) findViewById(R.id.StartedDishesListWiew);
         addRandomOrder = (Button) findViewById(R.id.AddRandomOrder);
 
         //Adapter is needed to build a dynamic list.

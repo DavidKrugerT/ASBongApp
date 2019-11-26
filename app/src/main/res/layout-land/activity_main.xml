@@ -19,7 +19,7 @@
         android:layout_marginBottom="100dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/CookingDishesListWiew"
+        app:layout_constraintEnd_toStartOf="@+id/StartedDishesListWiew"
         app:layout_constraintStart_toEndOf="@+id/OrderListView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +49,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/CookingDishesListWiew"
+        android:id="@+id/StartedDishesListWiew"
         android:layout_width="348dp"
         android:layout_height="650dp"
         android:layout_marginTop="200dp"
@@ -84,13 +84,13 @@
         app:layout_constraintStart_toStartOf="@+id/DishListView" />
 
     <TextView
-        android:id="@+id/CookingDishesTextView"
+        android:id="@+id/StartedDishesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="Cooking Dishes"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/CookingDishesListWiew"
-        app:layout_constraintStart_toStartOf="@+id/CookingDishesListWiew" />
+        app:layout_constraintBottom_toTopOf="@+id/StartedDishesListWiew"
+        app:layout_constraintStart_toStartOf="@+id/StartedDishesListWiew" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
