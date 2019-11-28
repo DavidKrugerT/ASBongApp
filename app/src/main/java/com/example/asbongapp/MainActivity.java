@@ -101,16 +101,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Creating dishStatus with random stuff.
     private DishStatus createDish() throws MalformedURLException {
         DishStatus dish = new DishStatus();
-        do {
+      /*  do {
             GetOrderFromAPI getOrderFromAPI = new GetOrderFromAPI();
             getOrderFromAPI.execute(dish);
-        }while(dish.getFoodName() == null);
+        }while(dish.getFoodName() == null);*/
 
-       /* dish.setFoodName(Math.random()>0.5?"Krabba":"Häst");
+       dish.setFoodName(Math.random()>0.5?"Krabba":"Häst");
         dish.setTable(Math.random()>0.5?1:2);
         dish.setOrderNumber(Math.random()>0.5?1:2);
         dish.setTime((int) (Math.random()*100));
-        dish.setDone(false);*/
+        dish.setDone(false);
 
         return dish;
     }
