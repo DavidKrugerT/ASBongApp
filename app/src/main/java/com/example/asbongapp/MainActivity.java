@@ -12,11 +12,13 @@ import android.os.Handler;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ListView dishListView, orderListView, cookingDishListView;
+    private ListView dishListView, orderListView, startedDishListView;
     private Button addRandomOrder;
     private Order order = new Order();
+    private StartedDish startedDish = new StartedDish();
     private ArrayAdapter<DishStatus> dishAdapter;
     private ArrayAdapter<OrderStatus> orderAdapter;
+    private ArrayAdapter<OrderStatus> startedDishAdapter;
     Handler timerHandler = new Handler();
     //Starts function every other second
     Runnable timerRunnable = new Runnable(){
@@ -36,12 +38,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
         orderListView = (ListView) findViewById(R.id.OrderListView);
-        cookingDishListView = (ListView) findViewById(R.id.StartedDishesListWiew);
-        addRandomOrder = (Button) findViewById(R.id.AddRandomOrder);
+        startedDishListView = (ListView) findViewById(R.id.StartedDishesListWiew);
+        addRandomOrder = (Button) findViewById(R.id.StopPrintingEverySecond);
 
         //Adapter is needed to build a dynamic list.
         //First create an adapter and then set the adapter to the listview.
         order.addDishStatus(createDish());
+        startedDish.addStartedDishStatus(createStartedDish());
+
 
         dishAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, order.getDishStatuses());
         dishListView.setAdapter(dishAdapter);
@@ -80,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         orderStatus.setOrderNumber(1);
         orderStatus.setTableNumber(3);
         return orderStatus;
+    }
+    private StartedDishStatus createStartedDish(){
+        StartedDishStatus startedDishStatus = new StartedDishStatus();
+        startedDishStatus.setFoodName(Math.random()>0.5?"Fisk":"Ost");
+        startedDishStatus.setOrderNumber(Math.random()>0.5?1:2);
+        startedDishStatus.setTime((int) (Math.random()*100));
+        return startedDishStatus;
     }
 
     private void fetchDishesStatus() {

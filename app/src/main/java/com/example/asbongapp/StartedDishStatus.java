@@ -4,15 +4,6 @@ public class StartedDishStatus {
     private Integer orderNumber;
     private String foodName;
     private Integer time;
-    private Boolean done;
-
-    public Boolean getDone() {
-        return done;
-    }
-
-    public void setDone(Boolean done) {
-        this.done = done;
-    }
 
     public Integer getOrderNumber() {
         return orderNumber;
@@ -38,5 +29,8 @@ public class StartedDishStatus {
         this.time = time;
     }
 
-
+    @Override
+    public String toString() {
+        return orderNumber + "\t\t" + foodName + "\t\t" + time;
+    }
 }
