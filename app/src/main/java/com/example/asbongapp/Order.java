@@ -5,25 +5,25 @@ import java.util.Collections;
 import java.util.List;
 
 public class Order {
-    private ArrayList<DishStatus> dishStatuses;
+    private ArrayList<Dish> dishStatuses;
     private List<OrderStatus> orderStatuses;
 
     public Order() {
-
-        dishStatuses = new ArrayList<DishStatus>();
+        dishStatuses = new ArrayList<Dish>();
         orderStatuses = new ArrayList<OrderStatus>();
     }
-    public ArrayList<DishStatus> getDishStatuses() {
+    public ArrayList<Dish> getDishStatuses() {
         return dishStatuses;
     }
 
-    public void setDishStatuses(ArrayList<DishStatus> dishStatuses) {
+    public void setDishStatuses(ArrayList<Dish> dishStatuses) {
         this.dishStatuses = dishStatuses;
     }
 
-    public void addDishStatus(DishStatus dishStatus){
+    public void addDishStatus(Dish dishStatus){
         this.dishStatuses.add(dishStatus);
     }
+
     public void addOrderStatus(OrderStatus orderStatus){
         this.orderStatuses.add(orderStatus);
     }

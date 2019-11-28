@@ -14,12 +14,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="200dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="150dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/StartedDishesListWiew"
         app:layout_constraintStart_toEndOf="@+id/OrderListView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,20 +33,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/StopPrintingEverySecond"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="512dp"
-        android:layout_marginRight="512dp"
-        android:text="Stop printing"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/StartedDishesListWiew"
+        android:id="@+id/ProgressListWiew"
         android:layout_width="348dp"
         android:layout_height="650dp"
         android:layout_marginTop="200dp"
@@ -87,10 +73,9 @@
         android:id="@+id/StartedDishesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="Cooking Dishes"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/StartedDishesListWiew"
-        app:layout_constraintStart_toStartOf="@+id/StartedDishesListWiew" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

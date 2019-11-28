@@ -1,10 +1,11 @@
 package com.example.asbongapp;
 
-public class DishStatus implements Comparable<DishStatus>{
-    private String foodName;
-    private Integer orderNumber;
+public class Dish implements Comparable<Dish>{
+    private String name;
     private Integer time;
     private Integer table;
+    private Integer price;
+    private Boolean done;
 
     public Integer getPrice() {
         return price;
@@ -14,24 +15,12 @@ public class DishStatus implements Comparable<DishStatus>{
         this.price = price;
     }
 
-    private Integer price;
-    private Boolean done;
-
-
-    public Integer getOrderNumber() {
-        return orderNumber;
+    public String getName() {
+        return name;
     }
 
-    public void setOrderNumber(Integer orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public String getFoodName() {
-        return foodName;
-    }
-
-    public void setFoodName(String foodName) {
-        this.foodName = foodName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getTime() {
@@ -59,7 +48,7 @@ public class DishStatus implements Comparable<DishStatus>{
     }
 
     @Override
-    public int compareTo(DishStatus dishStatus) {
+    public int compareTo(Dish dishStatus) {
         if(this.getTime() < dishStatus.getTime()){
             return -1;
         }
@@ -71,6 +60,6 @@ public class DishStatus implements Comparable<DishStatus>{
 
     @Override
     public String toString() {
-        return foodName + "\t\t\t" + time + "\t\t\t" + table + "\t\t\t" + done + "\t\t\t Orderid: " + orderNumber;
+        return "Dish = [name = " + name + "]";
     }
 }
