@@ -5,6 +5,16 @@ public class DishStatus implements Comparable<DishStatus>{
     private Integer orderNumber;
     private Integer time;
     private Integer table;
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+
+    private Integer price;
     private Boolean done;
 
 
