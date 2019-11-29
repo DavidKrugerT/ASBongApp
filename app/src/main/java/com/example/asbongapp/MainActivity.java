@@ -39,15 +39,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ListView dishListView, orderListView, startedDishListView;
-    private Button addRandomOrder;
+    private ListView dishListView;
     private List<Dish> dishes = new ArrayList<>();
-    private StartedDish startedDish = new StartedDish();
 
     private ArrayAdapter<Dish> dishAdapter;
-    private ArrayAdapter<OrderStatus> orderAdapter;
-    private ArrayAdapter<Dish> progressAdapter;
-    Handler timerHandler = new Handler();
     private Timer timer = new Timer();
 
     @Override
@@ -57,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
-        orderListView = (ListView) findViewById(R.id.OrderListView);
-        startedDishListView = (ListView) findViewById(R.id.ProgressListWiew);
 
         /**
         * Adapter is needed to build a dynamic list.
@@ -72,9 +65,12 @@ public class MainActivity extends AppCompatActivity {
         timer.schedule(runWithIntervall, 0, 2000);
     }
 
-    private void addDish(Dish dish) throws MalformedURLException {
+    private void addDish(List<Dish> tmpDishes) throws MalformedURLException {
         //Add items.
-        dishes.add(dish);
+
+        for(int i = 0; i < tmpDishes.size(); i++){
+            dishes.add(i, tmpDishes.get(i));
+        }
         //Alert listView that something is changed.
         dishAdapter.notifyDataSetChanged();
     }
@@ -91,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class GetOrderFromAPI extends AsyncTask<Void, Void, Dish> {
-        URL url = new URL("http://192.168.100.179:8080/Project-WebApp/webresources/entity.dish/");
+    private class GetOrderFromAPI extends AsyncTask<Void, Void, List<Dish>> {
+        URL url = new URL("http://10.250.124.26:8080/Project-WebApp/webresources/entity.dish/");
         //URL urlCount = new URL("http://10.250.119.122:8080/Project-WebApp/webresources/entity.dish/count");
 
         InputStream inputStream = null;
@@ -102,11 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         @Override
-        protected Dish doInBackground(Void... voids) {
-            Dish dish = null;
+        protected List<Dish> doInBackground(Void... voids) {
+            List<Dish> tmpDishes = new ArrayList<>();
             try {
-                System.out.println("New Try");
-                dish = new Dish();
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Content-Type", "application/json");
 
@@ -119,9 +113,8 @@ public class MainActivity extends AppCompatActivity {
                     stringBuilder.append(line).append("\n");
                 }
                 br.close();
-                Log.d(this.getClass().toString(), stringBuilder.toString());
                 try {
-                    dish = parseXML(stringBuilder.toString());
+                    tmpDishes = parseXML(stringBuilder.toString());
                 } catch (SAXException e) {
                     e.printStackTrace();
                 } catch (ParserConfigurationException e) {
@@ -131,48 +124,41 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return dish;
+            return tmpDishes;
         }
 
         @Override
-        protected void onPostExecute(Dish dish) {
-            super.onPostExecute(dish);
+        protected void onPostExecute(List<Dish> tmp) {
+            super.onPostExecute(tmp);
 
-            Boolean exists = false;
-            for (int i = 0; i < dishes.size(); i++){
-                if (dishes.get(i).getName().equals(dish.getName())) {
-                    exists = true;
-                }
-            }
-            if (!exists) {
-                try {
-                    addDish(dish);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
+            try {
+                addDish(tmp);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
         }
 
-        private Dish parseXML(String str) throws IOException, SAXException, ParserConfigurationException {
-            Dish dish = new Dish();
+        private List<Dish> parseXML(String str) throws IOException, SAXException, ParserConfigurationException {
+            List<Dish> tmpDishes = new ArrayList<>();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new InputSource(new StringReader(str)));
             doc.getDocumentElement().normalize();
-            //Element root = doc.getDocumentElement();
             NodeList nodeList = doc.getElementsByTagName("dish");
             for (int temp = 0; temp < nodeList.getLength(); temp++){
                 Node node = nodeList.item(temp);
+                Dish dish = new Dish();
                 if(node.getNodeType() == Node.ELEMENT_NODE){
                     Element element = (Element)node;
-                    dish.setTime(15);
-                    dish.setDone(true);
-                    dish.setTable(1);
+                    dish.setDishid(Integer.valueOf(element.getElementsByTagName("dishid").item(0).getTextContent()));
                     dish.setName(element.getElementsByTagName("name").item(0).getTextContent());
-                    dish.setPrice(10);
+                    dish.setDescription(element.getElementsByTagName("description").item(0).getTextContent());
+                    dish.setPrice((element.getElementsByTagName("price").item(0).getTextContent()));
+                    dish.setCookingTime((element.getElementsByTagName("cookingTime").item(0).getTextContent()));
                 }
+                tmpDishes.add(dish);
             }
-            return dish;
+            return tmpDishes;
         }
     }
 }

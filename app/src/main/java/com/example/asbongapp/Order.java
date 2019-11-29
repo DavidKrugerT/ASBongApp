@@ -2,40 +2,58 @@ package com.example.asbongapp;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class Order {
-    private ArrayList<Dish> dishStatuses;
-    private List<OrderStatus> orderStatuses;
+    private Integer orderingid;
+    private Date ordertime;
+    private Boolean isDone;
+    private Integer diningTable;
+    private List<Dish> dishes;
 
-    public Order() {
-        dishStatuses = new ArrayList<Dish>();
-        orderStatuses = new ArrayList<OrderStatus>();
-    }
-    public ArrayList<Dish> getDishStatuses() {
-        return dishStatuses;
-    }
-
-    public void setDishStatuses(ArrayList<Dish> dishStatuses) {
-        this.dishStatuses = dishStatuses;
+    public Integer getOrderingid() {
+        return orderingid;
     }
 
-    public void addDishStatus(Dish dishStatus){
-        this.dishStatuses.add(dishStatus);
+    public void setOrderingid(Integer orderingid) {
+        this.orderingid = orderingid;
     }
 
-    public void addOrderStatus(OrderStatus orderStatus){
-        this.orderStatuses.add(orderStatus);
+    public Date getOrdertime() {
+        return ordertime;
     }
 
-    public List<OrderStatus> getOrderStatuses() {
-        return orderStatuses;
+    public void setOrdertime(Date ordertime) {
+        this.ordertime = ordertime;
     }
 
-    public void setOrderStatuses(List<OrderStatus> orderStatuses) {
-        this.orderStatuses = orderStatuses;
+    public Boolean getDone() {
+        return isDone;
     }
-    public void sortDishesByTime(){
-        Collections.sort(dishStatuses, Collections.reverseOrder());
+
+    public void setDone(Boolean done) {
+        isDone = done;
+    }
+
+    public Integer getDiningTable() {
+        return diningTable;
+    }
+
+    public void setDiningTable(Integer diningTable) {
+        this.diningTable = diningTable;
+    }
+
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    public void setDishes(List<Dish> dishes) {
+        this.dishes = dishes;
+    }
+
+    @Override
+    public String toString() {
+        return "Dish = [Orderingid = " + orderingid + "\t\t\t ordertime = " + ordertime + "\t\t\t isDone = " + isDone + "]";
     }
 }

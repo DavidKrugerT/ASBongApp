@@ -1,18 +1,19 @@
 package com.example.asbongapp;
 
 public class Dish implements Comparable<Dish>{
+    private Integer dishid;
     private String name;
-    private Integer time;
-    private Integer table;
-    private Integer price;
-    private Boolean done;
+    private String description;
+    private String cookingTime;
+    private String price;
 
-    public Integer getPrice() {
-        return price;
+
+    public Integer getDishid() {
+        return dishid;
     }
 
-    public void setPrice(Integer price) {
-        this.price = price;
+    public void setDishid(Integer dishid) {
+        this.dishid = dishid;
     }
 
     public String getName() {
@@ -23,36 +24,36 @@ public class Dish implements Comparable<Dish>{
         this.name = name;
     }
 
-    public Integer getTime() {
-        return time;
+    public String getDescription() {
+        return description;
     }
 
-    public void setTime(Integer time) {
-        this.time = time;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Integer getTable() {
-        return table;
+    public String getCookingTime() {
+        return cookingTime;
     }
 
-    public void setTable(Integer table) {
-        this.table = table;
+    public void setCookingTime(String cookingTime) {
+        this.cookingTime = cookingTime;
     }
 
-    public Boolean getDone() {
-        return done;
+    public String getPrice() {
+        return price;
     }
 
-    public void setDone(Boolean done) {
-        this.done = done;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     @Override
     public int compareTo(Dish dishStatus) {
-        if(this.getTime() < dishStatus.getTime()){
+        if(Integer.valueOf(this.getCookingTime()) < Integer.valueOf(dishStatus.getCookingTime())){
             return -1;
         }
-        else if(this.getTime() == dishStatus.getTime()){
+        else if(this.getCookingTime() == dishStatus.getCookingTime()){
             return 0;
         }
         else return 1;
@@ -60,6 +61,7 @@ public class Dish implements Comparable<Dish>{
 
     @Override
     public String toString() {
-        return "Dish = [name = " + name + "]";
+        return "Dish = [Name = " + name + "\t\t\t Description = " + description + "\t\t\t Time = " + cookingTime + "]";
     }
+
 }
