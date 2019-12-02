@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import android.os.Handler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,9 +44,16 @@ import javax.xml.parsers.ParserConfigurationException;
 public class MainActivity extends AppCompatActivity {
 
     private ListView dishListView;
+    private ListView orderListView;
+    private ListView progressListView;
     private List<Dish> dishes = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
+    private List<Dish> progress = new ArrayList<>();
+
 
     private ArrayAdapter<Dish> dishAdapter;
+    private ArrayAdapter<Order> orderAdapter;
+    private ArrayAdapter<Dish> progressAdapter;
     private Timer timer = new Timer();
 
     @Override
@@ -52,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
+        orderListView = (ListView) findViewById(R.id.OrderListView);
+        progressListView = (ListView) findViewById(R.id.ProgressListWiew);
 
         /**
         * Adapter is needed to build a dynamic list.
@@ -60,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
 
         dishAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, dishes);
         dishListView.setAdapter(dishAdapter);
+        orderAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, orders);
+        orderListView.setAdapter(orderAdapter);
+        progressAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, progress);
+        progressListView.setAdapter(progressAdapter);
 
         RunWithIntervall runWithIntervall = new RunWithIntervall();
         timer.schedule(runWithIntervall, 0, 2000);
@@ -67,14 +84,40 @@ public class MainActivity extends AppCompatActivity {
 
     private void addDish(List<Dish> tmpDishes) throws MalformedURLException {
         //Add items.
-
         for(int i = 0; i < tmpDishes.size(); i++){
-            dishes.add(i, tmpDishes.get(i));
+            dishes.add(tmpDishes.get(i));
         }
         //Alert listView that something is changed.
         dishAdapter.notifyDataSetChanged();
     }
 
+    private void updateOrderColumn() {
+        Integer tmpTot;
+        Integer tmpDone;
+
+        orders.removeAll(orders);
+
+        for (int i = 1; i <= 10; i++) {
+            tmpTot = 0;
+            tmpDone = 0;
+            for (int j = 0; j < dishes.size(); j++) {
+                if (dishes.get(j).getOrderNumber() == i) {
+                    tmpTot++;
+                    if (dishes.get(j).getDone()){
+                        tmpDone++;
+                    }
+                }
+            }
+            if (tmpTot != 0) {
+                Order order = new Order();
+                order.setName(i);
+                order.setTot(tmpTot);
+                order.setDone(tmpDone);
+                orders.add(order);
+            }
+        }
+        orderAdapter.notifyDataSetChanged();
+    }
 
     private class RunWithIntervall extends TimerTask{
         @Override
@@ -87,22 +130,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class GetOrderFromAPI extends AsyncTask<Void, Void, List<Dish>> {
-        URL url = new URL("http://10.250.124.26:8080/Project-WebApp/webresources/entity.dish/");
-        //URL urlCount = new URL("http://10.250.119.122:8080/Project-WebApp/webresources/entity.dish/count");
 
+
+
+
+
+
+
+
+
+
+
+
+
+    private class GetOrderFromAPI extends AsyncTask<Void, Void, List<Dish>> {
         InputStream inputStream = null;
 
         private GetOrderFromAPI() throws MalformedURLException {
         }
-
-
         @Override
         protected List<Dish> doInBackground(Void... voids) {
+            URL url;
             List<Dish> tmpDishes = new ArrayList<>();
             try {
+                if (dishes.isEmpty() && progress.isEmpty()){
+                    url = new URL("http://10.250.124.8:8080/Project-WebApp/webresources/entity.dish/");
+                } else {
+                    url = new URL("http://10.250.124.8:8080/Project-WebApp/webresources/entity.dish/" + dishes.size()+progress.size() + "/10000");
+                }
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestProperty("Content-Type", "application/json");
+                urlConnection.setRequestProperty("Accept", "application/json");
 
                 urlConnection.setRequestMethod("GET");
                 inputStream = urlConnection.getInputStream();
@@ -113,14 +170,12 @@ public class MainActivity extends AppCompatActivity {
                     stringBuilder.append(line).append("\n");
                 }
                 br.close();
-                try {
-                    tmpDishes = parseXML(stringBuilder.toString());
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                }
+                tmpDishes = parser(stringBuilder.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -133,32 +188,36 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 addDish(tmp);
+                updateOrderColumn();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
 
-        private List<Dish> parseXML(String str) throws IOException, SAXException, ParserConfigurationException {
+
+        /**
+         *
+         * @param str
+         * @return
+         * @throws JSONException
+         */
+        private List<Dish> parser(String str) throws JSONException {
             List<Dish> tmpDishes = new ArrayList<>();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new StringReader(str)));
-            doc.getDocumentElement().normalize();
-            NodeList nodeList = doc.getElementsByTagName("dish");
-            for (int temp = 0; temp < nodeList.getLength(); temp++){
-                Node node = nodeList.item(temp);
-                Dish dish = new Dish();
-                if(node.getNodeType() == Node.ELEMENT_NODE){
-                    Element element = (Element)node;
-                    dish.setDishid(Integer.valueOf(element.getElementsByTagName("dishid").item(0).getTextContent()));
-                    dish.setName(element.getElementsByTagName("name").item(0).getTextContent());
-                    dish.setDescription(element.getElementsByTagName("description").item(0).getTextContent());
-                    dish.setPrice((element.getElementsByTagName("price").item(0).getTextContent()));
-                    dish.setCookingTime((element.getElementsByTagName("cookingTime").item(0).getTextContent()));
-                }
-                tmpDishes.add(dish);
+            JSONArray jArray = new JSONArray(str);
+            for (int i = 0; i < jArray.length(); i++) {
+                Dish tmpDish = new Dish();
+                JSONObject jObject = jArray.getJSONObject(i);
+                tmpDish.setDishid(jObject.getInt("dishid"));
+                tmpDish.setName(jObject.getString("name"));
+                tmpDish.setPrice(jObject.getDouble("price"));
+                tmpDish.setCookingTime(jObject.getInt("cookingTime"));
+                tmpDish.setOrderNumber(jObject.getInt("orderNumber"));
+                tmpDish.setTableNumber(jObject.getInt("tableNumber"));
+                tmpDish.setDone(jObject.getBoolean("done"));
+                tmpDishes.add(tmpDish);
             }
             return tmpDishes;
         }
     }
+
 }

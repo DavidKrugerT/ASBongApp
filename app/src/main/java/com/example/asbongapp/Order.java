@@ -1,59 +1,39 @@
 package com.example.asbongapp;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 public class Order {
-    private Integer orderingid;
-    private Date ordertime;
-    private Boolean isDone;
-    private Integer diningTable;
-    private List<Dish> dishes;
+    private Integer name;
+    private Integer tot;
+    private Integer done;
 
-    public Integer getOrderingid() {
-        return orderingid;
+    public Integer getTot() {
+        return tot;
     }
 
-    public void setOrderingid(Integer orderingid) {
-        this.orderingid = orderingid;
+    public void setTot(Integer tot) {
+        this.tot = tot;
     }
 
-    public Date getOrdertime() {
-        return ordertime;
+    public Integer getDone() {
+        return done;
     }
 
-    public void setOrdertime(Date ordertime) {
-        this.ordertime = ordertime;
+    public void setDone(Integer done) {
+        this.done = done;
     }
 
-    public Boolean getDone() {
-        return isDone;
+    public Integer getName() {
+        return name;
     }
 
-    public void setDone(Boolean done) {
-        isDone = done;
-    }
-
-    public Integer getDiningTable() {
-        return diningTable;
-    }
-
-    public void setDiningTable(Integer diningTable) {
-        this.diningTable = diningTable;
-    }
-
-    public List<Dish> getDishes() {
-        return dishes;
-    }
-
-    public void setDishes(List<Dish> dishes) {
-        this.dishes = dishes;
+    public void setName(Integer name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return "Dish = [Orderingid = " + orderingid + "\t\t\t ordertime = " + ordertime + "\t\t\t isDone = " + isDone + "]";
+        return "Order: " + name + ", " + done + " of " + tot + " is done.";
     }
+
+
+
 }
