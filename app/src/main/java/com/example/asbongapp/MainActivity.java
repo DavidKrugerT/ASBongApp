@@ -61,6 +61,39 @@ public class MainActivity extends AppCompatActivity {
         dishAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, dishes);
         dishListView.setAdapter(dishAdapter);
 
+        /**
+         *
+         * dishAdapter = new ArrayAdapter<DishStatus>
+         *                 (getApplicationContext(), android.R.layout.simple_list_item_1, order.getDishStatuses()){
+         *             @Override
+         *             public View getView(int position, View convertView, ViewGroup parent){
+         *                 // Get the Item from ListView
+         *                 View view = super.getView(position, convertView, parent);
+         *
+         *                 // Initialize a TextView for ListView each Item
+         *                 TextView tv = (TextView) view.findViewById(android.R.id.text1);
+         *
+         *                 // Set the text color of TextView (ListView Item)
+         *                 tv.setTextColor(Color.BLACK);
+         *                 tv.setMinHeight(0); // Min Height
+         *                 tv.setMinimumHeight(0); // Min Height
+         *                 tv.setHeight(100); // Height
+         *                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f);
+         *
+         *                 tv.setTypeface(null, Typeface.BOLD);
+         *                 tv.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+         *
+         *
+         *
+         *
+         *                 // Generate ListView Item using TextView
+         *                 return view;
+         *             }
+         *         };
+         *
+         *
+         *
+         *             dishListView.setAdapter(dishAdapter);*/
         RunWithIntervall runWithIntervall = new RunWithIntervall();
         timer.schedule(runWithIntervall, 0, 2000);
     }
