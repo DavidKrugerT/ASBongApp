@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         //Find and define all objects on screen.
         dishListView = (ListView) findViewById(R.id.DishListView);
         orderListView = (ListView) findViewById(R.id.OrderListView);
-        progressListView = (ListView) findViewById(R.id.ProgressListWiew);
+        progressListView = (ListView) findViewById(R.id.ProgressListView);
 
         /**
         * Adapter is needed to build a dynamic list.
