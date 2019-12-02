@@ -3,9 +3,11 @@ package com.example.asbongapp;
 public class Dish implements Comparable<Dish>{
     private Integer dishid;
     private String name;
-    private String description;
-    private String cookingTime;
-    private String price;
+    private Double price;
+    private Integer cookingTime;
+    private Integer orderNumber;
+    private Integer tableNumber;
+    private Boolean done;
 
 
     public Integer getDishid() {
@@ -24,28 +26,44 @@ public class Dish implements Comparable<Dish>{
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCookingTime() {
+    public Integer getCookingTime() {
         return cookingTime;
     }
 
-    public void setCookingTime(String cookingTime) {
+    public void setCookingTime(Integer cookingTime) {
         this.cookingTime = cookingTime;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Integer getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(Integer tableNumber) {
+        this.tableNumber = tableNumber;
+    }
+
+    public Boolean getDone() {
+        return done;
+    }
+
+    public void setDone(Boolean done) {
+        this.done = done;
     }
 
     @Override
@@ -61,7 +79,8 @@ public class Dish implements Comparable<Dish>{
 
     @Override
     public String toString() {
-        return "Dish = [Name = " + name + "\t\t\t Description = " + description + "\t\t\t Time = " + cookingTime + "]";
+        return dishid +  ",   " + name + ",         Cooking Time: " + cookingTime + ",          Order: " + orderNumber;
     }
+
 
 }
