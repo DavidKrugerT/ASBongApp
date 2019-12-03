@@ -79,7 +79,7 @@ public class Dish implements Comparable<Dish>{
 
     @Override
     public String toString() {
-        return dishid +  ",   " + name + ",         Cooking Time: " + cookingTime + ",          Order: " + orderNumber;
+        return name +",    "+ cookingTime + "min,    Order: " + orderNumber;
     }
 
 

@@ -1,45 +1,31 @@
 package com.example.asbongapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-import android.util.Log;
+import android.util.Pair;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-
-import android.os.Handler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,12 +35,15 @@ public class MainActivity extends AppCompatActivity {
     private List<Dish> dishes = new ArrayList<>();
     private List<Order> orders = new ArrayList<>();
     private List<Dish> progress = new ArrayList<>();
-
+    private List<Integer> alreadyFetchedDishes = new ArrayList<>();
 
     private ArrayAdapter<Dish> dishAdapter;
     private ArrayAdapter<Order> orderAdapter;
     private ArrayAdapter<Dish> progressAdapter;
-    private Timer timer = new Timer();
+    private Timer intervalTimer = new Timer();
+    private Timer onTheMiunuteTimer = new Timer();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
         orderListView = (ListView) findViewById(R.id.OrderListView);
         progressListView = (ListView) findViewById(R.id.ProgressListView);
 
+        dishListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                progress.add(dishes.get(i));
+                dishes.remove(i);
+                progressAdapter.notifyDataSetChanged();
+                dishAdapter.notifyDataSetChanged();
+            }
+        });
         /**
         * Adapter is needed to build a dynamic list.
         * First create an adapter and then set the adapter to the listview.
@@ -112,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
          *
          *             dishListView.setAdapter(dishAdapter);*/
         RunWithIntervall runWithIntervall = new RunWithIntervall();
-        timer.schedule(runWithIntervall, 0, 2000);
+        intervalTimer.schedule(runWithIntervall, 0, 2000);
+        RunEveryMinute runEveryMinute = new RunEveryMinute();
+        onTheMiunuteTimer.schedule(runEveryMinute, 0, 6000);
     }
 
     private void addDish(List<Dish> tmpDishes) throws MalformedURLException {
@@ -124,32 +124,28 @@ public class MainActivity extends AppCompatActivity {
         dishAdapter.notifyDataSetChanged();
     }
 
-    private void updateOrderColumn() {
-        Integer tmpTot;
-        Integer tmpDone;
-
-        orders.removeAll(orders);
-
-        for (int i = 1; i <= 10; i++) {
-            tmpTot = 0;
-            tmpDone = 0;
-            for (int j = 0; j < dishes.size(); j++) {
-                if (dishes.get(j).getOrderNumber() == i) {
-                    tmpTot++;
-                    if (dishes.get(j).getDone()){
-                        tmpDone++;
-                    }
-                }
+    private void updateOrderColumn(List<Dish> tmpDishes) {
+        HashMap<Integer, Integer>  countingOrders = new HashMap<>();
+        for (Dish dish : tmpDishes) {
+            if (countingOrders.containsKey(dish.getOrderNumber())) {
+                countingOrders.put(dish.getOrderNumber(), countingOrders.get(dish.getOrderNumber()) + 1);
+            } else {
+                countingOrders.put(dish.getOrderNumber(), 1);
             }
-            if (tmpTot != 0) {
-                Order order = new Order();
-                order.setName(i);
-                order.setTot(tmpTot);
-                order.setDone(tmpDone);
-                orders.add(order);
-            }
+
         }
+
+        for (HashMap.Entry<Integer, Integer> entry : countingOrders.entrySet()) {
+            Order tmpOrder = new Order();
+            tmpOrder.setName(entry.getKey());
+            tmpOrder.setTot(entry.getValue());
+            tmpOrder.setDone(0);
+
+            orders.add(tmpOrder);
+        }
+
         orderAdapter.notifyDataSetChanged();
+
     }
 
     private class RunWithIntervall extends TimerTask{
@@ -187,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
             List<Dish> tmpDishes = new ArrayList<>();
             try {
                 if (dishes.isEmpty() && progress.isEmpty()){
-                    url = new URL("http://10.250.124.8:8080/Project-WebApp/webresources/entity.dish/");
+                    url = new URL("http://10.250.124.34:8080/Project-WebApp/webresources/entity.dish/");
                 } else {
-                    url = new URL("http://10.250.124.8:8080/Project-WebApp/webresources/entity.dish/" + dishes.size()+progress.size() + "/10000");
+                    url = new URL("http://10.250.124.34:8080/Project-WebApp/webresources/entity.dish/" + (dishes.size()+progress.size()) + "/10000");
                 }
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept", "application/json");
@@ -216,12 +212,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<Dish> tmp) {
-            super.onPostExecute(tmp);
+        protected void onPostExecute(List<Dish> tmpDishes) {
+            super.onPostExecute(tmpDishes);
 
             try {
-                addDish(tmp);
-                updateOrderColumn();
+                addDish(tmpDishes);
+                updateOrderColumn(tmpDishes);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -247,10 +243,46 @@ public class MainActivity extends AppCompatActivity {
                 tmpDish.setOrderNumber(jObject.getInt("orderNumber"));
                 tmpDish.setTableNumber(jObject.getInt("tableNumber"));
                 tmpDish.setDone(jObject.getBoolean("done"));
-                tmpDishes.add(tmpDish);
+                if (!alreadyFetchedDishes.contains(tmpDish.getDishid())) {
+                    tmpDishes.add(tmpDish);
+                    alreadyFetchedDishes.add(tmpDish.getDishid());
+                }
             }
             return tmpDishes;
         }
     }
 
+    class RunEveryMinute extends TimerTask {
+
+        @Override
+        public void run() {
+            for(int i = 0; i < progress.size(); i++){
+                Dish dish = progress.get(i);
+                dish.setCookingTime(dish.getCookingTime()-1);
+                if(dish.getCookingTime().equals(0)){
+                    Integer name = progress.get(i).getOrderNumber();
+                    for (Order order : orders) {
+                        if (order.getName().equals(name)) {
+                            order.setDone(order.getDone()+1);
+                            if (order.getDone().equals(order.getTot())) {
+                                orders.remove(order);
+                            }
+                        }
+
+                    }
+                    progress.remove(i);
+
+                }
+            }
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressAdapter.notifyDataSetChanged();
+                    orderAdapter.notifyDataSetChanged();
+                }
+            });
+
+        }
+    }
 }
