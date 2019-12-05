@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Dish> progress = new ArrayList<>();
     private List<Integer> alreadyFetchedDishes = new ArrayList<>();
 
+
+
     private ArrayAdapter<Dish> dishAdapter;
     private ArrayAdapter<Order> orderAdapter;
     private ArrayAdapter<Dish> progressAdapter;
