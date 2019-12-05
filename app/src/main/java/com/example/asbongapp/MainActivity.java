@@ -1,12 +1,17 @@
 package com.example.asbongapp;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -76,46 +81,79 @@ public class MainActivity extends AppCompatActivity {
         * First create an adapter and then set the adapter to the listview.
         */
 
-        dishAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, dishes);
-        dishListView.setAdapter(dishAdapter);
-        orderAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, orders);
-        orderListView.setAdapter(orderAdapter);
-        progressAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_spinner_item, progress);
-        progressListView.setAdapter(progressAdapter);
+        dishAdapter = new ArrayAdapter<Dish>(getApplicationContext(), android.R.layout.simple_spinner_item, dishes)
+        {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent){
+                //Get the item from ListView
+                View view = super.getView(position, convertView, parent);
 
-        /**
-         *
-         * dishAdapter = new ArrayAdapter<DishStatus>
-         *                 (getApplicationContext(), android.R.layout.simple_list_item_1, order.getDishStatuses()){
-         *             @Override
-         *             public View getView(int position, View convertView, ViewGroup parent){
-         *                 // Get the Item from ListView
-         *                 View view = super.getView(position, convertView, parent);
-         *
-         *                 // Initialize a TextView for ListView each Item
-         *                 TextView tv = (TextView) view.findViewById(android.R.id.text1);
-         *
-         *                 // Set the text color of TextView (ListView Item)
-         *                 tv.setTextColor(Color.BLACK);
-         *                 tv.setMinHeight(0); // Min Height
-         *                 tv.setMinimumHeight(0); // Min Height
-         *                 tv.setHeight(100); // Height
-         *                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f);
-         *
-         *                 tv.setTypeface(null, Typeface.BOLD);
-         *                 tv.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-         *
-         *
-         *
-         *
-         *                 // Generate ListView Item using TextView
-         *                 return view;
-         *             }
-         *         };
-         *
-         *
-         *
-         *             dishListView.setAdapter(dishAdapter);*/
+                // Initialize a TextView for ListView each Item
+                TextView tv = (TextView) view.findViewById(android.R.id.text1);
+
+                tv.setTextColor(Color.WHITE);
+                tv.setMinHeight(0);
+                tv.setMinimumHeight(0);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
+
+
+                tv.setTypeface(null, Typeface.BOLD);
+                tv.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                return view;
+            }
+        };
+        dishListView.setAdapter(dishAdapter);
+
+
+        orderAdapter = new ArrayAdapter<Order>(getApplicationContext(), android.R.layout.simple_spinner_item, orders) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                //Get the item from ListView
+                View view = super.getView(position, convertView, parent);
+
+                // Initialize a TextView for ListView each Item
+                TextView tv = (TextView) view.findViewById(android.R.id.text1);
+
+                tv.setTextColor(Color.WHITE);
+                tv.setMinHeight(0);
+                tv.setMinimumHeight(0);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25f);
+
+
+                tv.setTypeface(null, Typeface.BOLD);
+                tv.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                return view;
+            }
+        };
+
+
+        orderListView.setAdapter(orderAdapter);
+        progressAdapter = new ArrayAdapter<Dish>(getApplicationContext(), android.R.layout.simple_spinner_item, progress) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent){
+                //Get the item from ListView
+                View view = super.getView(position, convertView, parent);
+
+                // Initialize a TextView for ListView each Item
+                TextView tv = (TextView) view.findViewById(android.R.id.text1);
+
+                tv.setTextColor(Color.WHITE);
+                tv.setMinHeight(0);
+                tv.setMinimumHeight(0);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40f);
+
+                tv.setTypeface(null, Typeface.BOLD);
+                tv.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                return view;
+            }
+        };
+
+
+
+        progressListView.setAdapter(progressAdapter);
         RunWithIntervall runWithIntervall = new RunWithIntervall();
         intervalTimer.schedule(runWithIntervall, 0, 2000);
         RunEveryMinute runEveryMinute = new RunEveryMinute();
@@ -190,9 +228,9 @@ public class MainActivity extends AppCompatActivity {
             List<Dish> tmpDishes = new ArrayList<>();
             try {
                 if (dishes.isEmpty() && progress.isEmpty()){
-                    url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/");
+                    url = new URL("http://10.250.119.132:8080/Project-WebApp/webresources/entity.dish/");
                 } else {
-                    url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/" + (dishes.size()+progress.size()) + "/10000");
+                    url = new URL("http://10.250.119.132:8080/Project-WebApp/webresources/entity.dish/" + (dishes.size()+progress.size()) + "/10000");
                 }
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept", "application/json");
@@ -313,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
             URL url;
             List<Dish> tmpDishes = new ArrayList<>();
             try {
-                url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/order/" + orderNumber);
+                url = new URL("http://10.250.119.132:8080/Project-WebApp/webresources/entity.dish/order/" + orderNumber);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept", "application/json");
 
@@ -343,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
             URL url;
             List<Dish> tmpDishes = new ArrayList<>();
             try {
-                url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/" + doneDish.getDishid());
+                url = new URL("http://10.250.119.132:8080/Project-WebApp/webresources/entity.dish/" + doneDish.getDishid());
 
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("PUT");
