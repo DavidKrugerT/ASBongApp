@@ -7,15 +7,20 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -185,9 +190,9 @@ public class MainActivity extends AppCompatActivity {
             List<Dish> tmpDishes = new ArrayList<>();
             try {
                 if (dishes.isEmpty() && progress.isEmpty()){
-                    url = new URL("http://10.250.124.34:8080/Project-WebApp/webresources/entity.dish/");
+                    url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/");
                 } else {
-                    url = new URL("http://10.250.124.34:8080/Project-WebApp/webresources/entity.dish/" + (dishes.size()+progress.size()) + "/10000");
+                    url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/" + (dishes.size()+progress.size()) + "/10000");
                 }
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept", "application/json");
@@ -201,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     stringBuilder.append(line).append("\n");
                 }
                 br.close();
+                inputStream.close();
                 tmpDishes = parser(stringBuilder.toString());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -224,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
 
         /**
          *
@@ -252,28 +257,44 @@ public class MainActivity extends AppCompatActivity {
             }
             return tmpDishes;
         }
+
+
+
     }
 
     class RunEveryMinute extends TimerTask {
 
         @Override
         public void run() {
-            for(int i = 0; i < progress.size(); i++){
+            for (int i = 0; i < progress.size(); i++) {
                 Dish dish = progress.get(i);
-                dish.setCookingTime(dish.getCookingTime()-1);
-                if(dish.getCookingTime().equals(0)){
+                dish.setCookingTime(dish.getCookingTime() - 1);
+                if (dish.getCookingTime().equals(0)) {
                     Integer name = progress.get(i).getOrderNumber();
-                    for (Order order : orders) {
+                    for (int j = 0; j < orders.size(); j++) {
+                        Order order = orders.get(j);
                         if (order.getName().equals(name)) {
-                            order.setDone(order.getDone()+1);
+                            order.setDone(order.getDone() + 1);
                             if (order.getDone().equals(order.getTot())) {
-                                orders.remove(order);
+                                orders.remove(j);
+                                List<Dish> doneDishes = getDoneDishes(progress.get(i).getOrderNumber());
+                                for (Dish doneDish : doneDishes) {
+                                    updateDB(doneDish);
+                                }
+
+
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast toast = Toast.makeText(MainActivity.this, "Order is done", Toast.LENGTH_LONG);
+                                        toast.show();
+                                    }
+                                });
+
                             }
                         }
-
                     }
                     progress.remove(i);
-
                 }
             }
 
@@ -284,7 +305,111 @@ public class MainActivity extends AppCompatActivity {
                     orderAdapter.notifyDataSetChanged();
                 }
             });
+        }
+
+
+        private List<Dish> getDoneDishes(Integer orderNumber) {
+            InputStream inputStream = null;
+            URL url;
+            List<Dish> tmpDishes = new ArrayList<>();
+            try {
+                url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/order/" + orderNumber);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Accept", "application/json");
+
+                urlConnection.setRequestMethod("GET");
+                inputStream = urlConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder stringBuilder = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+                br.close();
+                inputStream.close();
+                tmpDishes = parser(stringBuilder.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return tmpDishes;
+        }
+
+        private void updateDB(Dish doneDish) {
+            URL url;
+            List<Dish> tmpDishes = new ArrayList<>();
+            try {
+                url = new URL("http://10.250.124.20:8080/Project-WebApp/webresources/entity.dish/" + doneDish.getDishid());
+
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("PUT");
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+
+
+                JSONObject jObject= new JSONObject();
+
+                jObject.put("done", true);
+                jObject.put("dishid", doneDish.getDishid());
+                jObject.put("name", doneDish.getName());
+                jObject.put("orderNumber", doneDish.getOrderNumber());
+                jObject.put("price", doneDish.getPrice());
+                jObject.put("tableNumber", doneDish.getTableNumber());
+                jObject.put("cookingTime", doneDish.getCookingTime());
+
+
+                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                BufferedWriter bWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+                bWriter.write(jObject.toString());
+                bWriter.flush();
+                bWriter.close();
+                out.close();
+                System.out.println(urlConnection.getResponseCode());
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         }
+
+        /**
+         *
+         * @param str
+         * @return
+         * @throws JSONException
+         */
+        private List<Dish> parser(String str) throws JSONException {
+            List<Dish> tmpDishes = new ArrayList<>();
+            JSONArray jArray = new JSONArray(str);
+            for (int i = 0; i < jArray.length(); i++) {
+                Dish tmpDish = new Dish();
+                JSONObject jObject = jArray.getJSONObject(i);
+                tmpDish.setDishid(jObject.getInt("dishid"));
+                tmpDish.setName(jObject.getString("name"));
+                tmpDish.setPrice(jObject.getDouble("price"));
+                tmpDish.setCookingTime(jObject.getInt("cookingTime"));
+                tmpDish.setOrderNumber(jObject.getInt("orderNumber"));
+                tmpDish.setTableNumber(jObject.getInt("tableNumber"));
+                tmpDish.setDone(jObject.getBoolean("done"));
+                tmpDishes.add(tmpDish);
+            }
+            return tmpDishes;
+        }
     }
+
+    public class myOwnToast extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
+                                                                  
 }
