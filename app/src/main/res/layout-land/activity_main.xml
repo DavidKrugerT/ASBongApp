@@ -28,7 +28,7 @@
                 android:background="#6b8096"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:text="Order's"
+                android:text="Orders"
                 android:textColor="@color/colorAccent"
                 android:textSize="30sp"
                 />
@@ -77,7 +77,7 @@
                 android:background="#6b8096"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:text="Cooking Dishes"
+                android:text="Dishes in progress"
                 android:textColor="@color/colorAccent"
                 android:textSize="30sp" />
             <ListView
